@@ -12,11 +12,11 @@ const store = new Vuex.Store({
   mutations: {
     increment: (state) => {
       const obj = state
-      obj.count += 1
+      obj.count += 3
     },
     decrement: (state) => {
       const obj = state
-      obj.count -= 1
+      obj.count -= 3
     }
   }
 })
