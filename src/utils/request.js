@@ -1,16 +1,18 @@
-const host = 'http://localhost:8080/igrsiot'
+const host = 'http://localhost:8080'
 
 function request (url, method, data, header = {}) {
   wx.showLoading({
     title: 'Loading'
   })
   return new Promise((resolve, reject) => {
+    console.log('222222222')
+    console.log(data)
     wx.request({
       url: host + url,
       method: method,
       data: data,
       headers: {
-        'content-type': 'application/json'
+        'content-type': 'application/x-www-form-urlencoded'
       },
       success: function (res) {
         wx.hideLoading()
@@ -32,6 +34,8 @@ function get (obj) {
 }
 
 function post (obj) {
+  console.log('11111111')
+  console.log(obj)
   return request(obj.url, 'POST', obj.data)
 }
 
