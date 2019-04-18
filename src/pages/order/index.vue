@@ -2,6 +2,12 @@
   <div>
     <div>
       <div>
+        <label>寄件人地址：</label>
+        <input type="text" id="from_address" name="from_address" v-model="fromAddress">
+        <label>姓名：</label>
+        <input type="text" id="user_from" name="user_from" v-model="userFrom">
+        <label>电话：</label>
+        <input type="text" id="user_from_phone" name="user_from_phone" v-model="userFromPhone">
         <div>
           <label>省：</label>
           <picker @change="provincePickerChange" :value="provinceIndex" :range="provinceArray">
@@ -16,6 +22,12 @@
             {{cityArray[cityIndex]}}
           </view>
         </picker>
+        <label>收件人地址：</label>
+        <input type="text" id="to_address" name="to_address" v-model="toAddress">
+        <label>姓名：</label>
+        <input type="text" id="user_to" name="user_to" v-model="userTo">
+        <label>电话：</label>
+        <input type="text" id="user_to_phone" name="user_to_phone" v-model="userToPhone">
         <label>重量：</label>
         <input type="text" id="weight" name="weight" v-model="weight">
         <label>体积：</label>
@@ -25,16 +37,16 @@
           <div>
             <radio-group class="radio-group" @change="radioChange">
               <label class="radio" v-for="(item, index) in radioItems" :key="item.name">
-                <radio :value="item.name" :checked="item.checked"/> {{item.value}}
+                <radio :value="item.name"/> {{item.value}}
               </label>
             </radio-group>
           </div>
         </div>
         <div>
           <label>收款金额：</label>
-          <input type="button" class="weui-btn-area" value="计算" v-on:click="calCharge()">
+          <!--<input type="button" class="weui-btn-area" value="计算" v-on:click="calCharge()">-->
         </div>
-        <input type="text" id="amount" name="amount" v-model="this.amount">
+        <input type="text" id="amount" name="amount" v-model="amount">
         <input type="button" value="提交" v-on:click="submitOrder()">
       </div>
     </div>
@@ -60,10 +72,16 @@
         provinceArray: [],
         cityIndex: 0,
         cityArray: [],
-        weight: 0,
-        volume: 0,
+        fromAddress: '',
+        userFrom: '',
+        userFromPhone: '',
+        userTo: '',
+        userToPhone: '',
+        toAddress: '',
+        weight: '',
+        volume: '',
         baseCharge: 0,
-        amount: 0
+        amount: ''
       }
     },
     components: {
@@ -82,23 +100,30 @@
       },
       radioChange (e) {
         console.log('radio发生change事件，携带value值为：', e.target.value + ':' + this.radioIndex)
+        // this.radioIndex = e.target.value - 1
+        this.radioIndex = e.target.value - 1
+        console.log('radioIndex: ' + this.radioIndex)
+        // console.log(this)
+        this.calCharge(e.target.value)
       },
-      calCharge (e) {
+      calCharge (type) {
         console.log('calculate charge')
         console.log(this.radioItems[this.radioIndex].name)
         var province = this.provinceArray[this.provinceIndex]
         var city = this.cityArray[this.cityIndex]
         this.getBaseCharge(province, city)
         var temp = this.weight * this.baseCharge
-        if (this.radioIndex.equals('1')) {
+        console.log('charge type: ' + this.radioIndex)
+        if (this.radioIndex === 0) {
           this.amount = (temp > this.radioItems[0].charge) ? temp : this.radioItems[0].charge
-        } else if (this.radioIndex.equals('2')) {
+          console.log('amount: ' + this.amount + '-' + temp + '-' + this.radioItems[0].charge)
+        } else if (this.radioIndex === 1) {
           this.amount = temp + this.radioItems[1].charge
-        } else if (this.radioIndex.equals('3')) {
-          if (this.weight < this.radioItems[3].weight) {
-            this.amount = this.radioItems[3].charge
+        } else if (this.radioIndex === 2) {
+          if (this.weight < this.radioItems[2].weight) {
+            this.amount = this.radioItems[2].charge
           } else {
-            this.amount = this.radioItems[3].charge + (this.weight - this.radioItems[3].weight) * this.baseCharge
+            this.amount = this.radioItems[2].charge + (this.weight - this.radioItems[2].weight) * this.baseCharge
           }
         } else {
           console.log('illegal charge type')
@@ -106,16 +131,26 @@
       },
       submitOrder (ev) {
         console.log('submit order')
-        var to = this.provinceArray[this.provinceIndex] + this.cityArray[this.cityIndex]
+        var orderFrom = this.fromAddress
+        var orderTo = this.provinceArray[this.provinceIndex]
+        if (this.cityArray[this.cityIndex] === '空') {
+          orderTo += '市' + this.toAddress
+        } else {
+          orderTo += '省' + this.cityArray[this.cityIndex] + '市' + this.toAddress
+        }
         this.$http.post({
           url: '/order/generate',
           data: {
-            from: '',
-            to: to,
-            chargeType: this.radioIndex,
+            userFrom: this.userFrom,
+            userFromPhone: this.userFromPhone,
+            userTo: this.userTo,
+            userToPhone: this.userToPhone,
+            orderFrom: orderFrom,
+            orderTo: orderTo,
+            chargeType: this.radioIndex.toString(),
             weight: this.weight,
             volume: this.volume,
-            charge: this.charge
+            amount: this.amount
           }
         })
       },
@@ -153,7 +188,7 @@
       },
       getBaseCharge (province, city) {
         this.$http.post({
-          url: 'baseCharge/getByArea',
+          url: '/baseCharge/getByArea',
           data: {
             'province': province,
             'city': city
@@ -162,10 +197,41 @@
           console.log(res)
           this.baseCharge = res
         })
+      },
+      getChargeType () {
+        for (var i = 0; i < 3; i++) {
+          var type = i.toString()
+          this.$http.post({
+            url: '/chargeType/getByType',
+            data: {
+              'type': type
+            }
+          }).then(res => {
+            console.log(res)
+            switch (res.type) {
+              case '0':
+                this.radioItems[0].charge = res.charge
+                console.log('getChargeType type' + res.type + 'result: ' + res.charge)
+                break
+              case '1':
+                this.radioItems[1].charge = res.charge
+                console.log('getChargeType type' + res.type + 'result: ' + res.charge)
+                break
+              case '2':
+                this.radioItems[2].charge = res.charge
+                this.radioItems[2].weight = res.remark
+                console.log('getChargeType type' + res.type + 'result: ' + res.charge + 'weight: ' + res.remark)
+                break
+              default:
+                break
+            }
+          })
+        }
       }
     },
     created () {
       this.getProvince()
+      this.getChargeType()
     }
   }
 </script>

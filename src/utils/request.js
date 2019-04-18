@@ -5,7 +5,6 @@ function request (url, method, data, header = {}) {
     title: 'Loading'
   })
   return new Promise((resolve, reject) => {
-    console.log('222222222')
     console.log(data)
     wx.request({
       url: host + url,
@@ -34,7 +33,6 @@ function get (obj) {
 }
 
 function post (obj) {
-  console.log('11111111')
   console.log(obj)
   return request(obj.url, 'POST', obj.data)
 }
