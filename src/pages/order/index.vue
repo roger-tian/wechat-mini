@@ -97,6 +97,8 @@
       cityPickerChange (e) {
         console.log(e)
         this.cityIndex = e.mp.detail.value
+
+        this.getBaseCharge()
       },
       radioChange (e) {
         console.log('radio发生change事件，携带value值为：', e.target.value + ':' + this.radioIndex)
@@ -104,14 +106,11 @@
         this.radioIndex = e.target.value - 1
         console.log('radioIndex: ' + this.radioIndex)
         // console.log(this)
-        this.calCharge(e.target.value)
+        this.calCharge(e)
       },
-      calCharge (type) {
+      calCharge (e) {
         console.log('calculate charge')
         console.log(this.radioItems[this.radioIndex].name)
-        var province = this.provinceArray[this.provinceIndex]
-        var city = this.cityArray[this.cityIndex]
-        this.getBaseCharge(province, city)
         var temp = this.weight * this.baseCharge
         console.log('charge type: ' + this.radioIndex)
         if (this.radioIndex === 0) {
@@ -119,6 +118,8 @@
           console.log('amount: ' + this.amount + '-' + temp + '-' + this.radioItems[0].charge)
         } else if (this.radioIndex === 1) {
           this.amount = temp + this.radioItems[1].charge
+          console.log('amount: ' + this.amount + '-' + temp + '-' + this.radioItems[1].charge)
+          console.log('weight: ' + this.weight + '-' + this.baseCharge)
         } else if (this.radioIndex === 2) {
           if (this.weight < this.radioItems[2].weight) {
             this.amount = this.radioItems[2].charge
@@ -158,6 +159,7 @@
         this.$http.post({
           url: '/area/getProvince'
         }).then(res => {
+          console.log('getProvince result: ' + res)
           this.provinceIndex = 0
           this.cityIndex = 0
           if (res.length === 0) {
@@ -184,9 +186,17 @@
           } else {
             this.cityArray = res
           }
+          this.getBaseCharge()
         })
       },
-      getBaseCharge (province, city) {
+      getBaseCharge () {
+        var province = this.provinceArray[this.provinceIndex]
+        var city = this.cityArray[this.cityIndex]
+        console.log('province: ' + province + ', city: ' + city)
+        console.log(this.provinceIndex)
+        console.log(this.provinceArray)
+        console.log(this.cityIndex)
+        console.log(this.cityArray)
         this.$http.post({
           url: '/baseCharge/getByArea',
           data: {
@@ -230,8 +240,8 @@
       }
     },
     created () {
-      this.getProvince()
       this.getChargeType()
+      this.getProvince()
     }
   }
 </script>
