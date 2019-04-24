@@ -1,53 +1,151 @@
+<!--<template>-->
+  <!--<div>-->
+    <!--<div>-->
+      <!--<div>-->
+        <!--<label>寄件人地址：</label>-->
+        <!--<input type="text" id="from_address" name="from_address" v-model="fromAddress">-->
+        <!--<label>姓名：</label>-->
+        <!--<input type="text" id="user_from" name="user_from" v-model="userFrom">-->
+        <!--<label>电话：</label>-->
+        <!--<input type="text" id="user_from_phone" name="user_from_phone" v-model="userFromPhone">-->
+        <!--<div>-->
+          <!--<label>省：</label>-->
+          <!--<picker @change="provincePickerChange" :value="provinceIndex" :range="provinceArray">-->
+            <!--<view class="picker">-->
+              <!--{{provinceArray[provinceIndex]}}-->
+            <!--</view>-->
+          <!--</picker>-->
+        <!--</div>-->
+        <!--<label>市：</label>-->
+        <!--<picker @change="cityPickerChange" :value="cityIndex" :range="cityArray">-->
+          <!--<view class="picker">-->
+            <!--{{cityArray[cityIndex]}}-->
+          <!--</view>-->
+        <!--</picker>-->
+        <!--<label>收件人地址：</label>-->
+        <!--<input type="text" id="to_address" name="to_address" v-model="toAddress">-->
+        <!--<label>姓名：</label>-->
+        <!--<input type="text" id="user_to" name="user_to" v-model="userTo">-->
+        <!--<label>电话：</label>-->
+        <!--<input type="text" id="user_to_phone" name="user_to_phone" v-model="userToPhone">-->
+        <!--<label>重量：</label>-->
+        <!--<input type="text" id="weight" name="weight" v-model="weight">-->
+        <!--<label>体积：</label>-->
+        <!--<input type="text" id="volume" name="volume" v-model="volume">-->
+        <!--<label>计费方式：</label>-->
+        <!--<div>-->
+          <!--<div>-->
+            <!--<radio-group class="radio-group" @change="radioChange">-->
+              <!--<label class="radio" v-for="(item, index) in radioItems" :key="item.name">-->
+                <!--<radio :value="item.name"/> {{item.value}}-->
+              <!--</label>-->
+            <!--</radio-group>-->
+          <!--</div>-->
+        <!--</div>-->
+        <!--<div>-->
+          <!--<label>收款金额：</label>-->
+          <!--&lt;!&ndash;<input type="button" class="weui-btn-area" value="计算" v-on:click="calCharge()">&ndash;&gt;-->
+        <!--</div>-->
+        <!--<input type="text" id="amount" name="amount" v-model="amount">-->
+        <!--<input type="button" value="提交" v-on:click="submitOrder()">-->
+        <!--<mp-button type="primary" size="large" btnClass="mb15">默认按钮</mp-button>-->
+      <!--</div>-->
+    <!--</div>-->
+  <!--</div>-->
+<!--</template>-->
 <template>
   <div>
-    <div>
-      <div>
-        <label>寄件人地址：</label>
-        <input type="text" id="from_address" name="from_address" v-model="fromAddress">
-        <label>姓名：</label>
-        <input type="text" id="user_from" name="user_from" v-model="userFrom">
-        <label>电话：</label>
-        <input type="text" id="user_from_phone" name="user_from_phone" v-model="userFromPhone">
-        <div>
-          <label>省：</label>
-          <picker @change="provincePickerChange" :value="provinceIndex" :range="provinceArray">
-            <view class="picker">
-              {{provinceArray[provinceIndex]}}
-            </view>
-          </picker>
+    <div class="weui-cells__title">下单</div>
+    <div class="weui-cells weui-cells_form">
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">姓名：</label>
         </div>
-        <label>市：</label>
-        <picker @change="cityPickerChange" :value="cityIndex" :range="cityArray">
-          <view class="picker">
-            {{cityArray[cityIndex]}}
-          </view>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="寄件人姓名" type="text" v-model="userFrom">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">电话：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" pattern="[0-9]*" placeholder="寄件人电话" type="tel" v-model="userFromPhone">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">地址：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="寄件人地址" type="text" size="small" v-model="fromAddress">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">姓名：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="收件人姓名" type="text" v-model="userTo">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">电话：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" pattern="[0-9]*" placeholder="收件人电话" type="tel" v-model="userToPhone">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <picker class="weui-btn" mode="region" :value="region" @change="CityChange">
+          <button class="weui-btn weui-btn_primary" type="default">地区</button>
         </picker>
-        <label>收件人地址：</label>
-        <input type="text" id="to_address" name="to_address" v-model="toAddress">
-        <label>姓名：</label>
-        <input type="text" id="user_to" name="user_to" v-model="userTo">
-        <label>电话：</label>
-        <input type="text" id="user_to_phone" name="user_to_phone" v-model="userToPhone">
-        <label>重量：</label>
-        <input type="text" id="weight" name="weight" v-model="weight">
-        <label>体积：</label>
-        <input type="text" id="volume" name="volume" v-model="volume">
-        <label>计费方式：</label>
-        <div>
-          <div>
-            <radio-group class="radio-group" @change="radioChange">
-              <label class="radio" v-for="(item, index) in radioItems" :key="item.name">
-                <radio :value="item.name"/> {{item.value}}
-              </label>
-            </radio-group>
-          </div>
+        <view class="picker">
+          {{region}}
+        </view>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">地址：</label>
         </div>
-        <div>
-          <label>收款金额：</label>
-          <!--<input type="button" class="weui-btn-area" value="计算" v-on:click="calCharge()">-->
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="收件人详细地址" type="text" v-model="toAddress">
         </div>
-        <input type="text" id="amount" name="amount" v-model="amount">
-        <input type="button" value="提交" v-on:click="submitOrder()">
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">重量：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="重量" type="number" v-model="weight">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">体积：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="体积" type="number" v-model="volume">
+        </div>
+      </div>
+      <div class="weui-cell">
+        <radio-group class="weui-radio-group" @change="radioChange">
+        <label class="radio" v-for="(item, index) in radioItems" :key="item.name">
+        <radio :value="item.name"/> {{item.value}}
+        </label>
+        </radio-group>
+      </div>
+      <div class="weui-cell">
+        <div class="weui-cell__hd">
+          <label class="weui-label">收款金额：</label>
+        </div>
+        <div class="weui-cell__bd">
+          <input class="weui-input" placeholder="收款金额" type="number" v-model="amount">
+        </div>
+      </div>
+      <div>
+        <input type="button" class="weui-btn weui-btn_primary" value="提交" v-on:click="submitOrder()">
       </div>
     </div>
   </div>
@@ -62,11 +160,12 @@
           nickName: 'mpvue',
           avatarUrl: 'http://mpvue.com/assets/logo.png'
         },
+        region: ['北京市', '北京市', '海淀区'],
         radioIndex: 0,
         radioItems: [
-          {name: '1', value: '最低', charge: ''},
-          {name: '2', value: '开单', charge: '', checked: 'true'},
-          {name: '3', value: '包首', weight: '', charge: ''}
+          {name: '1', value: '最低', charge: 0},
+          {name: '2', value: '开单', charge: 0, checked: 'true'},
+          {name: '3', value: '包首', weight: '', charge: 0}
         ],
         provinceIndex: 0,
         provinceArray: [],
@@ -81,12 +180,17 @@
         weight: '',
         volume: '',
         baseCharge: 0,
-        amount: ''
+        amount: 0
       }
     },
     components: {
     },
     methods: {
+      CityChange (e) {
+        console.log('选中的城市为：' + e.mp.detail.value)
+        this.region = e.mp.detail.value
+        this.getBaseCharge()
+      },
       provincePickerChange (e) {
         console.log(e)
         this.provinceIndex = e.mp.detail.value
@@ -111,20 +215,24 @@
       calCharge (e) {
         console.log('calculate charge')
         console.log(this.radioItems[this.radioIndex].name)
-        var temp = this.weight * this.baseCharge
+        var temp = parseFloat(this.weight) * parseFloat(this.baseCharge)
         console.log('charge type: ' + this.radioIndex)
         if (this.radioIndex === 0) {
           this.amount = (temp > this.radioItems[0].charge) ? temp : this.radioItems[0].charge
+          this.amount = parseFloat(this.amount).toFixed(3)
           console.log('amount: ' + this.amount + '-' + temp + '-' + this.radioItems[0].charge)
         } else if (this.radioIndex === 1) {
           this.amount = temp + this.radioItems[1].charge
+          this.amount = parseFloat(this.amount).toFixed(3)
           console.log('amount: ' + this.amount + '-' + temp + '-' + this.radioItems[1].charge)
           console.log('weight: ' + this.weight + '-' + this.baseCharge)
         } else if (this.radioIndex === 2) {
           if (this.weight < this.radioItems[2].weight) {
             this.amount = this.radioItems[2].charge
+            this.amount = parseFloat(this.amount).toFixed(3)
           } else {
             this.amount = this.radioItems[2].charge + (this.weight - this.radioItems[2].weight) * this.baseCharge
+            this.amount = parseFloat(this.amount).toFixed(3)
           }
         } else {
           console.log('illegal charge type')
@@ -190,22 +298,20 @@
         })
       },
       getBaseCharge () {
-        var province = this.provinceArray[this.provinceIndex]
-        var city = this.cityArray[this.cityIndex]
-        console.log('province: ' + province + ', city: ' + city)
-        console.log(this.provinceIndex)
-        console.log(this.provinceArray)
-        console.log(this.cityIndex)
-        console.log(this.cityArray)
+        var province = this.region[0]
+        var city = this.region[1]
+        var area = this.region[2]
+        console.log('province: ' + province + ', city: ' + city + ', area: ' + area)
         this.$http.post({
           url: '/baseCharge/getByArea',
           data: {
             'province': province,
-            'city': city
+            'city': city,
+            'area': area
           }
         }).then(res => {
-          console.log(res)
-          this.baseCharge = res
+          console.log('getBaseCharge' + res.charge)
+          this.baseCharge = res.charge
         })
       },
       getChargeType () {
@@ -240,8 +346,10 @@
       }
     },
     created () {
+      console.log('created' + this.region)
       this.getChargeType()
-      this.getProvince()
+      // this.getProvince()
+      this.getBaseCharge()
     }
   }
 </script>
