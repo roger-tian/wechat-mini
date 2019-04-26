@@ -1,4 +1,4 @@
-const host = 'http://localhost:8080'
+const host = 'http://148.70.33.11:8080'
 
 function request (url, method, data, header = {}) {
   wx.showLoading({
